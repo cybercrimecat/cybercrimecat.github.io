@@ -1,110 +1,119 @@
 let blogName = "vio's blog";
 let authorName = "vio";
-let authorLink = "https://twitter.com/cybercrimekitty"; 
+let authorLink = "https://twitter.com/cybercrimekitty";
 
 let postsArray = [
-//[ "posts/template.html" ],
-[ "posts/guide-to-hacking-and-opsec.html" ] ];
+  //[ "posts/template.html" ],
+  ["posts/guide-to-hacking-and-opsec.html"],
+];
 
 let url = window.location.pathname;
 
 const postDateFormat = /\d{4}\-\d{2}\-\d{2}\-/;
 
 let relativePath = ".";
-if ( url.includes("posts/") ) {
+if (url.includes("posts/")) {
   relativePath = "..";
 }
 
-
-let headerHTML = '<ul> <li><a href="' + relativePath + '/index.html">home</a></li>' + 
-'<li><a href="' + relativePath + '/archive.html">posts</a></li>' +
-'<li><a href="' + relativePath + '/about.html">about</a></li> </ul>';
+let headerHTML = '<ul> <li><a href="' + relativePath + '/index.html">home</a></li>' + '<li><a href="' + relativePath + '/archive.html">posts</a></li>' + '<li><a href="' + relativePath + '/about.html">about</a></li> </ul>';
 
 let footerHTML = "<hr><p>written by <a href='" + authorLink + "'>" + authorName + "</a>.</p>";
 
 let currentIndex = -1;
-let currentFilename = url.substring(url.lastIndexOf('posts/'));
+let currentFilename = url.substring(url.lastIndexOf("posts/"));
 
-if ( ! currentFilename.endsWith(".html") ) {
-    currentFilename += ".html";
+if (!currentFilename.endsWith(".html")) {
+  currentFilename += ".html";
 }
 let i;
 for (i = 0; i < postsArray.length; i++) {
-  if ( postsArray[i][0] === currentFilename ) {
+  if (postsArray[i][0] === currentFilename) {
     currentIndex = i;
   }
 }
 
 function formatPostTitle(i) {
-
-  if ( postsArray[i].length > 1 ) {
+  if (postsArray[i].length > 1) {
     return decodeURI(postsArray[i][1]);
-  } else { 
-	if (  postDateFormat.test ( postsArray[i][0].slice( 6,17 ) ) ) {
-	  return postsArray[i][0].slice(17,-5).replace(/-/g," ");
+  } else {
+    if (postDateFormat.test(postsArray[i][0].slice(6, 17))) {
+      return postsArray[i][0].slice(17, -5).replace(/-/g, " ");
     } else {
-      return postsArray[i][0].slice(6,-5).replace(/-/g," ");
+      return postsArray[i][0].slice(6, -5).replace(/-/g, " ");
     }
   }
 }
 
 let currentPostTitle = "";
 let niceDate = "";
-if ( currentIndex > -1 ) {
-  currentPostTitle = formatPostTitle( currentIndex );
-  if (  postDateFormat.test ( postsArray[currentIndex][0].slice( 6,17 ) ) ) {
-    let monthSlice = postsArray[currentIndex][0].slice( 11,13 );
+if (currentIndex > -1) {
+  currentPostTitle = formatPostTitle(currentIndex);
+  if (postDateFormat.test(postsArray[currentIndex][0].slice(6, 17))) {
+    let monthSlice = postsArray[currentIndex][0].slice(11, 13);
     let month = "";
-    if ( monthSlice === "01") { month = "Jan";}
-    else if ( monthSlice === "02") { month = "Feb";}
-    else if ( monthSlice === "03") { month = "Mar";}
-    else if ( monthSlice === "04") { month = "Apr";}
-    else if ( monthSlice === "05") { month = "May";}
-    else if ( monthSlice === "06") { month = "Jun";}
-    else if ( monthSlice === "07") { month = "Jul";}
-    else if ( monthSlice === "08") { month = "Aug";}
-    else if ( monthSlice === "09") { month = "Sep";}
-    else if ( monthSlice === "10") { month = "Oct";}
-    else if ( monthSlice === "11") { month = "Nov";}
-    else if ( monthSlice === "12") { month = "Dec";}
-	niceDate = postsArray[currentIndex][0].slice( 14,16 ) + " " + month + ", " + postsArray[currentIndex][0].slice( 6,10 );
+    if (monthSlice === "01") {
+      month = "Jan";
+    } else if (monthSlice === "02") {
+      month = "Feb";
+    } else if (monthSlice === "03") {
+      month = "Mar";
+    } else if (monthSlice === "04") {
+      month = "Apr";
+    } else if (monthSlice === "05") {
+      month = "May";
+    } else if (monthSlice === "06") {
+      month = "Jun";
+    } else if (monthSlice === "07") {
+      month = "Jul";
+    } else if (monthSlice === "08") {
+      month = "Aug";
+    } else if (monthSlice === "09") {
+      month = "Sep";
+    } else if (monthSlice === "10") {
+      month = "Oct";
+    } else if (monthSlice === "11") {
+      month = "Nov";
+    } else if (monthSlice === "12") {
+      month = "Dec";
+    }
+    niceDate = postsArray[currentIndex][0].slice(14, 16) + " " + month + ", " + postsArray[currentIndex][0].slice(6, 10);
   }
 }
 
-
 function formatPostLink(i) {
   let postTitle_i = "";
-  if ( postsArray[i].length > 1 ) {
+  if (postsArray[i].length > 1) {
     postTitle_i = decodeURI(postsArray[i][1]);
   } else {
-	if (  postDateFormat.test ( postsArray[i][0].slice( 6,17 ) ) ) {
-	  postTitle_i = postsArray[i][0].slice(17,-5).replace(/-/g," ");
+    if (postDateFormat.test(postsArray[i][0].slice(6, 17))) {
+      postTitle_i = postsArray[i][0].slice(17, -5).replace(/-/g, " ");
     } else {
-      postTitle_i = postsArray[i][0].slice(6,-5).replace(/-/g," ");
+      postTitle_i = postsArray[i][0].slice(6, -5).replace(/-/g, " ");
     }
   }
-  if (  postDateFormat.test ( postsArray[i][0].slice( 6,17 ) ) ) {
-    return '<p><li><a href="' + relativePath + '/'+ postsArray[i][0] +'">' + postsArray[i][0].slice(6,16) + " \u00BB " + postTitle_i + '</a></li></p>';
+  if (postDateFormat.test(postsArray[i][0].slice(6, 17))) {
+    return '<p><li><a href="' + relativePath + "/" + postsArray[i][0] + '">' + postsArray[i][0].slice(6, 16) + " \u00BB " + postTitle_i + "</a></li></p>";
   } else {
-    return '<p><li><a href="' + relativePath + '/'+ postsArray[i][0] +'">' + postTitle_i + '</a></li></p>';
+    return '<p><li><a href="' + relativePath + "/" + postsArray[i][0] + '">' + postTitle_i + "</a></li></p>";
   }
 }
 
 let postListHTML = "<ul>";
-for ( let i = 0; i < postsArray.length; i++ ) {
+for (let i = 0; i < postsArray.length; i++) {
   postListHTML += formatPostLink(i);
 }
 postListHTML += "</ul>";
 
-let recentPostsCutoff = 3; 
+let recentPostsCutoff = 3;
 let recentPostListHTML = "<h2>Recent Posts:</h2><ul>";
-let numberOfRecentPosts = Math.min( recentPostsCutoff, postsArray.length );
-for ( let i = 0; i < numberOfRecentPosts; i++ ) {
+let numberOfRecentPosts = Math.min(recentPostsCutoff, postsArray.length);
+for (let i = 0; i < numberOfRecentPosts; i++) {
   recentPostListHTML += formatPostLink(i);
 }
 
-if ( postsArray.length > recentPostsCutoff ) {
-  recentPostListHTML += '<li class="moreposts"><a href=' + relativePath + '/archive.html>\u00BB more posts</a></li></ul>';
+if (postsArray.length > recentPostsCutoff) {
+  recentPostListHTML += '<li class="moreposts"><a href=' + relativePath + "/archive.html>\u00BB more posts</a></li></ul>";
 } else {
   recentPostListHTML += "</ul>";
 }
@@ -113,20 +122,19 @@ let nextprevHTML = "";
 let nextlink = "";
 let prevlink = "";
 
-if ( postsArray.length < 2 ) {
+if (postsArray.length < 2) {
   nextprevHTML = '<a href="' + relativePath + '/index.html">Home</a>';
-} else if ( currentIndex === 0 ) {
+} else if (currentIndex === 0) {
   prevlink = postsArray[currentIndex + 1][0];
-  nextprevHTML = '<a href="' + relativePath + '/index.html">Home</a> | <a href="'+ relativePath + '/' + prevlink +'">Previous Post \u00BB</a>';
-} else if ( currentIndex === postsArray.length - 1 ) {
+  nextprevHTML = '<a href="' + relativePath + '/index.html">Home</a> | <a href="' + relativePath + "/" + prevlink + '">Previous Post \u00BB</a>';
+} else if (currentIndex === postsArray.length - 1) {
   nextlink = postsArray[currentIndex - 1][0];
-  nextprevHTML = '<a href="' + relativePath + '/' + nextlink +'">\u00AB Next Post</a> | <a href="' + relativePath + '/index.html">Home</a>';
-} else if ( 0 < currentIndex && currentIndex < postsArray.length - 1 ) {
+  nextprevHTML = '<a href="' + relativePath + "/" + nextlink + '">\u00AB Next Post</a> | <a href="' + relativePath + '/index.html">Home</a>';
+} else if (0 < currentIndex && currentIndex < postsArray.length - 1) {
   nextlink = postsArray[currentIndex - 1][0];
   prevlink = postsArray[currentIndex + 1][0];
-  nextprevHTML = '<a href="' + relativePath + '/'+ nextlink +'">\u00AB Next Post</a> | <a href="' + relativePath + '/index.html">Home</a> | <a href="' + relativePath + '/'+ prevlink +'">Previous Post \u00BB</a>';
+  nextprevHTML = '<a href="' + relativePath + "/" + nextlink + '">\u00AB Next Post</a> | <a href="' + relativePath + '/index.html">Home</a> | <a href="' + relativePath + "/" + prevlink + '">Previous Post \u00BB</a>';
 }
-
 
 if (document.getElementById("nextprev")) {
   document.getElementById("nextprev").innerHTML = nextprevHTML;
@@ -286,10 +294,7 @@ function oneko() {
       if (nekoPosY > window.innerHeight - 32) {
         avalibleIdleAnimations.push("scratchWallS");
       }
-      idleAnimation =
-        avalibleIdleAnimations[
-        Math.floor(Math.random() * avalibleIdleAnimations.length)
-        ];
+      idleAnimation = avalibleIdleAnimations[Math.floor(Math.random() * avalibleIdleAnimations.length)];
     }
 
     switch (idleAnimation) {
@@ -358,7 +363,7 @@ function oneko() {
   }
 
   create();
-};
+}
 
 const isReduced = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
 if (!isReduced) {
@@ -367,26 +372,27 @@ if (!isReduced) {
 
 // quotes :3
 const quotes = [
-  "\"the gayer the furry, the more a threat to national security\"",
-  "\"all i want for christmas is the destruction of the government\"",
-  "\"be gay do crime\"",
+  '"the gayer the furry, the more a threat to national security"',
+  '"all i want for christmas is the destruction of the government"',
+  '"be gay do crime"',
   "\"if i can't dance, i don't want to be part of your revolution\"",
-  "\"the urge to destroy is a creative one\"",
-  "\"remember to convince your friends to cause mayhem\"",
-  "\"BREAKING NEWS: kitten hackers are invading transphobic organisations :3c\"",
-  "\"i must be doing something wrong if feds ain't on my dick\"",
-  "\"holy fucking bingle!\"",
-  "\"i may hide behind a screen to fight for my rights, but you hide behind religion to attack the rights of others\"",
-  "\"if you use religion as a crutch to hate, you do not follow god.\"",
-  "\"whats ur opinion on vore\"",
-  "\"evade the law, on mighty kitty paws.\"",
-  "\"the wars of the future will not be fought by strong soldiers, but anarchist catgirl hackers\""
+  '"the urge to destroy is a creative one"',
+  '"remember to convince your friends to cause mayhem"',
+  '"BREAKING NEWS: kitten hackers are invading transphobic organisations :3c"',
+  '"i must be doing something wrong if feds ain\'t on my dick"',
+  '"holy fucking bingle!"',
+  '"i may hide behind a screen to fight for my rights, but you hide behind religion to attack the rights of others"',
+  '"if you use religion as a crutch to hate, you do not follow god."',
+  '"whats ur opinion on vore"',
+  '"evade the law, on mighty kitty paws."',
+  '"the wars of the future will not be fought by strong soldiers, but anarchist catgirl hackers"',
 ];
 
 function displayQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const quoteContainer = document.getElementById("quote-container");
-  quoteContainer.textContent = quotes[randomIndex];
+  if (quoteContainer)
+    quoteContainer.textContent = quotes[randomIndex];
 }
 
 window.onload = displayQuote;

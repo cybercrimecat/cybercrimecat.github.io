@@ -1,12 +1,8 @@
-/* CSS is how you can add style to your website, such as colors, fonts, and positioning of your
-   HTML content. To learn how to do something, just try searching Google for questions like
-   "how to change link color." */
-
 body {
   background-color: black;
-	background-position: top;
-	background-repeat: repeat-x;
-	background-attachment: fixed;
+  background-position: top;
+  background-repeat: repeat-x;
+  background-attachment: fixed;
   font-size: 18px;
   font-family: "Courier New", Courier, monospace;
   margin: 0;
@@ -51,28 +47,32 @@ img {
 a {
   color: #ffc000;
 }
-a:hover { 
+a:hover {
   background-color: #34220b;
 }
 
-h1, h2, h3, h4, h5 {
-  color: #9D8AC0;
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: #9d8ac0;
 }
 
 hr {
   border-width: 2px 0 0 0;
   border-style: dashed;
-  border-color: #9D8AC0; 
+  border-color: #9d8ac0;
 }
 
 /*#CONTAINER is the rectangle that has contains everything but the background!*/
 #container {
   margin: 3em auto;
   width: 90%;
-	max-width: 700px;
-	background-color: black;
-  color: #C3B1E1; 
-  outline-color: #C3B1E1;
+  max-width: 700px;
+  background-color: black;
+  color: #c3b1e1;
+  outline-color: #c3b1e1;
   outline-style: ridge;
   outline-width: 8px;
   outline-offset: 0;
@@ -81,7 +81,6 @@ hr {
 #content {
   padding: 10px 5% 20px 5%;
 }
-
 
 /*HEADER STYLE*/
 #header {
