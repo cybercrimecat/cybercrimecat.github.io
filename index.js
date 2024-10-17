@@ -31,7 +31,7 @@ function injectPostList(html, postListHtml) {
 }
 
 // Serve all HTML files in the site directory, injecting the post list if needed
-app.get('/*.html', (req, res) => {
+app.get('/*', (req, res) => {
   const filePath = path.join(siteDir, req.path);
 
   fs.readdir(postsDir, (err, files) => {
