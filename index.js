@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const siteDir = path.join(__dirname, 'site'); // Serve from the 'site' directory
-const postsDir = path.join(siteDir, 'posts'); // Adjusted path for posts
+const siteDir = path.join(__dirname, 'site');
+const postsDir = path.join(siteDir, 'posts');
 
 // Middleware to block access to /unlisted/ path
 app.use('/unlisted', (req, res, next) => {
@@ -12,16 +12,26 @@ app.use('/unlisted', (req, res, next) => {
 });
 
 // Serve static files from the 'site' folder
-app.use(express.static(siteDir)); // Now serving the entire 'site' folder
+app.use(express.static(siteDir));
 
-// API to get the list of posts
-app.get('/api/posts', (req, res) => {
+// Function to generate the HTML for the post list
+function generatePostListHtml(posts) {
+  let postListHtml = '<ul>';
+  posts.forEach(post => {
+    const postDate = post.filename.slice(0, 10); // Extract date from filename
+    postListHtml += `<li><a href="/posts/${post.filename}">${postDate} » ${post.title}</a></li>`;
+  });
+  postListHtml += '</ul>';
+  return postListHtml;
+}
+
+// Serve the index with posts embedded in the HTML
+app.get('/', (req, res) => {
   fs.readdir(postsDir, (err, files) => {
     if (err) {
-      return res.status(500).json({ error: 'Unable to scan posts directory' });
+      return res.status(500).send('Unable to scan posts directory');
     }
 
-    // Filter HTML files
     const posts = files
       .filter(file => file.endsWith('.html'))
       .map(file => ({
@@ -29,12 +39,19 @@ app.get('/api/posts', (req, res) => {
         title: file.replace(/-/g, ' ').replace('.html', ''),
       }));
 
-    res.json(posts);
-  });
-});
+    const postListHtml = generatePostListHtml(posts);
+    
+    // Read the index.html file and inject the post list into it
+    fs.readFile(path.join(siteDir, 'index.html'), 'utf8', (err, html) => {
+      if (err) {
+        return res.status(500).send('Unable to read index.html');
+      }
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(siteDir, 'index.html')); // Serve index.html from 'site'
+      // Inject the post list into a placeholder in the HTML
+      const updatedHtml = html.replace('<div id="recentpostlistdiv"></div>', `<div id="recentpostlistdiv">${postListHtml}</div>`);
+      res.send(updatedHtml);
+    });
+  });
 });
 
 const PORT = process.env.PORT || 3000;
