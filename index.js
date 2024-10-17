@@ -18,8 +18,7 @@ app.use(express.static(siteDir));
 function generatePostListHtml(posts) {
   let postListHtml = '<ul>';
   posts.forEach(post => {
-    const postDate = post.filename.slice(0, 10); // Extract date from filename
-    postListHtml += `<li><a href="/posts/${post.filename}">${postDate} » ${post.title}</a></li>`;
+    postListHtml += `<li><a href="/posts/${post.filename}">${post.title}</a></li>`;
   });
   postListHtml += '</ul>';
   return postListHtml;
