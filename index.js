@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
     const postListHtml = generatePostListHtml(posts);
     
     // Read the index.html file and inject the post list into it
-    fs.readFile(path.join(siteDir, 'index.html'), 'utf8', (err, html) => {
+    fs.readFile(path.join(siteDir, 'main.html'), 'utf8', (err, html) => {
       if (err) {
         return res.status(500).send('Unable to read index.html');
       }
