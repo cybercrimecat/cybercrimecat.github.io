@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
 });
 
 // Serve the posts.html with embedded post list
-app.get((path.join(siteDir, 'posts.html'), (req, res) => {
+app.get('/posts', (req, res) => {
   fs.readdir(postsDir, (err, files) => {
     if (err) {
       return res.status(500).send('Unable to scan posts directory');
