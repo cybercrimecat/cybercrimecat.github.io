@@ -29,9 +29,13 @@ function injectPostList(content, postListHtml) {
 
 // Serve all files in the site directory, injecting the post list if needed
 app.get('/*', (req, res) => {
-  const filePath = path.join(siteDir, req.path);
+  let filePath = path.join(siteDir, req.path);
 
-  // Scan the posts directory
+  // If root ("/") is requested, serve "index.html"
+  if (req.path === '/' || req.path === '') {
+    filePath = path.join(siteDir, 'index.html');
+  }
+
   fs.readdir(postsDir, (err, files) => {
     if (err) {
       return res.status(500).send('Unable to scan posts directory');
