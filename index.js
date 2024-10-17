@@ -82,6 +82,11 @@ app.get('/posts', (req, res) => {
   });
 });
 
+// Serve the 404 page if no other route matches
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(siteDir, '404.html'));
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
