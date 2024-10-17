@@ -11,6 +11,9 @@ app.use('/unlisted', (req, res, next) => {
   res.status(403).send('Access to this directory is forbidden.');
 });
 
+// Serve static files from the 'site' folder
+app.use(express.static(siteDir));
+
 // Function to generate the HTML for the post list
 function generatePostListHtml(posts) {
   let postListHtml = '<ul>';
@@ -21,21 +24,37 @@ function generatePostListHtml(posts) {
   return postListHtml;
 }
 
-// Function to inject the post list into any file (HTML, CSS, JS, etc.)
-function injectPostList(content, postListHtml) {
-  return content.replace('<div id="recentpostlistdiv"></div>', `<div id="recentpostlistdiv">${postListHtml}</div>`)
-                .replace('<div id="postlistdiv"></div>', `<div id="postlistdiv">${postListHtml}</div>`);
-}
+// Serve the index with posts embedded in the HTML
+app.get('/', (req, res) => {
+  fs.readdir(postsDir, (err, files) => {
+    if (err) {
+      return res.status(500).send('Unable to scan posts directory');
+    }
 
-// Serve all files in the site directory, injecting the post list if needed
-app.get('/*', (req, res) => {
-  let filePath = path.join(siteDir, req.path);
+    const posts = files
+      .filter(file => file.endsWith('.html'))
+      .map(file => ({
+        filename: file,
+        title: file.replace(/-/g, ' ').replace('.html', ''),
+      }));
 
-  // If root ("/") is requested, serve "index.html"
-  if (req.path === '/' || req.path === '') {
-    filePath = path.join(siteDir, 'index.html');
-  }
+    const postListHtml = generatePostListHtml(posts);
+    
+    // Read the index.html file and inject the post list into it
+    fs.readFile(path.join(siteDir, 'main.html'), 'utf8', (err, html) => {
+      if (err) {
+        return res.status(500).send('Unable to read index.html');
+      }
 
+      // Inject the post list into a placeholder in the HTML
+      const updatedHtml = html.replace('<div id="recentpostlistdiv"></div>', `<div id="recentpostlistdiv">${postListHtml}</div>`);
+      res.send(updatedHtml);
+    });
+  });
+});
+
+// Serve the posts.html with embedded post list
+app.get('/posts', (req, res) => {
   fs.readdir(postsDir, (err, files) => {
     if (err) {
       return res.status(500).send('Unable to scan posts directory');
@@ -50,15 +69,15 @@ app.get('/*', (req, res) => {
 
     const postListHtml = generatePostListHtml(posts);
 
-    // Read the requested file (HTML, CSS, JS, etc.)
-    fs.readFile(filePath, 'utf8', (err, content) => {
+    // Read the posts.html file and inject the post list into it
+    fs.readFile(path.join(siteDir, 'posts.html'), 'utf8', (err, html) => {
       if (err) {
-        return res.status(404).send('File not found');
+        return res.status(500).send('Unable to read posts.html');
       }
 
-      // Inject post list if placeholders exist
-      const updatedContent = injectPostList(content, postListHtml);
-      res.send(updatedContent);
+      // Inject the post list into a placeholder in the HTML
+      const updatedHtml = html.replace('<div id="postlistdiv"></div>', `<div id="postlistdiv">${postListHtml}</div>`);
+      res.send(updatedHtml);
     });
   });
 });
