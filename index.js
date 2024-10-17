@@ -53,6 +53,35 @@ app.get('/', (req, res) => {
   });
 });
 
+// Serve the posts.html with embedded post list
+app.get((path.join(siteDir, 'posts.html'), (req, res) => {
+  fs.readdir(postsDir, (err, files) => {
+    if (err) {
+      return res.status(500).send('Unable to scan posts directory');
+    }
+
+    const posts = files
+      .filter(file => file.endsWith('.html'))
+      .map(file => ({
+        filename: file,
+        title: file.replace(/-/g, ' ').replace('.html', ''),
+      }));
+
+    const postListHtml = generatePostListHtml(posts);
+
+    // Read the posts.html file and inject the post list into it
+    fs.readFile(path.join(siteDir, 'posts.html'), 'utf8', (err, html) => {
+      if (err) {
+        return res.status(500).send('Unable to read posts.html');
+      }
+
+      // Inject the post list into a placeholder in the HTML
+      const updatedHtml = html.replace('<div id="postlistdiv"></div>', `<div id="postlistdiv">${postListHtml}</div>`);
+      res.send(updatedHtml);
+    });
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
