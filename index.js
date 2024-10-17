@@ -24,37 +24,16 @@ function generatePostListHtml(posts) {
   return postListHtml;
 }
 
-// Serve the index with posts embedded in the HTML
-app.get('/', (req, res) => {
-  fs.readdir(postsDir, (err, files) => {
-    if (err) {
-      return res.status(500).send('Unable to scan posts directory');
-    }
+// Function to inject the post list into HTML files
+function injectPostList(html, postListHtml) {
+  return html.replace('<div id="recentpostlistdiv"></div>', `<div id="recentpostlistdiv">${postListHtml}</div>`)
+             .replace('<div id="postlistdiv"></div>', `<div id="postlistdiv">${postListHtml}</div>`);
+}
 
-    const posts = files
-      .filter(file => file.endsWith('.html'))
-      .map(file => ({
-        filename: file,
-        title: file.replace(/-/g, ' ').replace('.html', ''),
-      }));
+// Serve all HTML files in the site directory, injecting the post list if needed
+app.get('/*.html', (req, res) => {
+  const filePath = path.join(siteDir, req.path);
 
-    const postListHtml = generatePostListHtml(posts);
-    
-    // Read the index.html file and inject the post list into it
-    fs.readFile(path.join(siteDir, 'main.html'), 'utf8', (err, html) => {
-      if (err) {
-        return res.status(500).send('Unable to read index.html');
-      }
-
-      // Inject the post list into a placeholder in the HTML
-      const updatedHtml = html.replace('<div id="recentpostlistdiv"></div>', `<div id="recentpostlistdiv">${postListHtml}</div>`);
-      res.send(updatedHtml);
-    });
-  });
-});
-
-// Serve the posts.html with embedded post list
-app.get('/posts', (req, res) => {
   fs.readdir(postsDir, (err, files) => {
     if (err) {
       return res.status(500).send('Unable to scan posts directory');
@@ -69,14 +48,14 @@ app.get('/posts', (req, res) => {
 
     const postListHtml = generatePostListHtml(posts);
 
-    // Read the posts.html file and inject the post list into it
-    fs.readFile(path.join(siteDir, 'posts.html'), 'utf8', (err, html) => {
+    // Read the requested HTML file and inject the post list if placeholders are found
+    fs.readFile(filePath, 'utf8', (err, html) => {
       if (err) {
-        return res.status(500).send('Unable to read posts.html');
+        return res.status(404).send('File not found');
       }
 
-      // Inject the post list into a placeholder in the HTML
-      const updatedHtml = html.replace('<div id="postlistdiv"></div>', `<div id="postlistdiv">${postListHtml}</div>`);
+      // Inject post list if placeholders exist
+      const updatedHtml = injectPostList(html, postListHtml);
       res.send(updatedHtml);
     });
   });
